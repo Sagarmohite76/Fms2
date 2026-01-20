@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #e9edf3;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 900px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            background: #1f2937;
+            color: white;
+            padding: 18px 24px;
+        }
+
+        .logo {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .header-bar {
+            flex: 1;
+            height: 6px;
+            background: #2dd4bf;
+            margin-left: 20px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .title-row h2 {
+            font-size: 22px;
+            color: #1f2937;
+        }
+
+        .date-box {
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+        }
+
+        .date-box input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: #0f766e;
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px 24px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0f766e;
+        }
+
+        .submit-row {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 40px;
+            background: #0f766e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #115e59;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactive {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+        <div class="header">
+            <div class="logo">EDUCATION</div>
+            <div class="header-bar"></div>
+        </div>
+
+        <div class="content">
+            <div class="title-row">
+                <h2>Student Registration</h2>
+                <div class="date-box">
+                    <label>Date of Registration</label>
+                    <input type="date" id="date" required>
+                </div>
+            </div>
+
+            <form>
+
+                <h3>Personal Information</h3>
+
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Student Name</label>
+                        <input type="text" id="studentname" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Roll Number</label>
+                        <input type="text" id="rollno" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Class / Course</label>
+                        <input type="text" id="degree" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Academic Year</label>
+                        <input type="text" id="year" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="mobileno" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+                </div>
+
+                <div class="submit-row">
+                    <button type="submit">Register Student</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.querySelector("form");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const studentName = document.getElementById("studentname");
+            const rollNo = document.getElementById("rollno");
+            const degree = document.getElementById("degree");
+            const year = document.getElementById("year");
+            const mobileNo = document.getElementById("mobileno");
+            const email = document.getElementById("email");
+            const date = document.getElementById("date");
+            console.log(date.value);
+
+            fetch("http://localhost:3000/add-user2", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: studentName.value,
+                    rollno: rollNo.value,
+                    degree: degree.value,
+                    year: year.value,
+                    mobile: mobileNo.value,
+                    email: email.value,
+                    date:date.value
+
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message === "User added") {
+                        alert("Student registered successfully!");
+                        form.reset();
+                        window.location.replace("studentdashboard.html")
+                    } else {
+                        alert("Registration failed");
+                    }
+                })
+                .catch(() => {
+                    alert("Server error");
+                });
+
+
+        });
+    </script>
+
+</body>
+
+</html>

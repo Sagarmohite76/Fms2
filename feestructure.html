@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fee Structure | Fee Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f8;
+        }
+
+        #menu-toggle {
+            display: none;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #1f2933;
+            color: #ffffff;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .menu .active {
+            background: #374151;
+        }
+
+        .logout {
+            margin-top: 30px;
+            background: #b91c1c;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background: #991b1b;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .top-bar h1 {
+            color: #1f2933;
+        }
+
+        .form-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            color: #1f2933;
+        }
+
+        .fee-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1f2933;
+        }
+
+        button {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background: #1f2933;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #374151;
+        }
+
+        .table-section h2 {
+            margin-bottom: 15px;
+            color: #1f2933;
+        }
+
+        .table-wrapper {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #1f2933;
+            color: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f4f6f8;
+        }
+
+        .paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactive {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            #menu-toggle:checked+.sidebar {
+                transform: translateX(0);
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <input type="checkbox" id="menu-toggle">
+
+        <aside class="sidebar">
+            <h2 class="logo">FMS</h2>
+            <ul class="menu">
+                <li onclick="dashboard()">Dashboard</li>
+                <li onclick="students()">Students</li>
+                <li class="active">Fee Structure</li>
+                <li onclick="payments()">Payments</li>
+                <li onclick="dues()">Dues</li>
+                <li onclick="receipts()">Receipts</li>
+                <li onclick="reports()">Reports</li>
+                <li class="logout" onclick="logout()">Logout</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <label for="menu-toggle" class="menu-btn">☰</label>
+                <h1>Fee Structure</h1>
+            </header>
+
+            <section class="form-section">
+                <h2>Create Fee Structure</h2>
+
+                <form class="fee-form" id="form">
+                    <div class="form-group">
+                        <label>Class / Course</label>
+                        <input type="text" required id="class" placeholder="e.g. BCA, BSc, 10th">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Academic Year</label>
+                        <input type="text" required id="year" placeholder="2025 - 2026">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Education Fee</label>
+                        <input type="number" required id="educationfee" placeholder="Enter amount">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hostel Fee</label>
+                        <input type="number" id="hostelfee" placeholder="Enter amount">
+                    </div>
+
+                    <button type="submit">Save Fee Structure</button>
+                </form>
+            </section>
+
+            <section class="table-section">
+                <h2>Existing Fee Structures</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Class</th>
+                                <th>Academic Year</th>
+                                <th>Total Fee</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablerow"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script>
+        document.getElementById("form").addEventListener("submit", (e) => {
+            e.preventDefault()
+            const class1 = document.getElementById("class");
+            const year = document.getElementById("year");
+            const educationfee = document.getElementById("educationfee");
+            const hostelfee = document.getElementById("hostelfee");
+
+            fetch("http://localhost:2000/add-user3", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    class1: class1.value,
+                    year: year.value,
+                    educationfee: educationfee.value,
+                    hostelfee: hostelfee.value
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message === "User added") {
+                        alert("Student registered successfully!");
+                        class1.value = "";
+                        year.value = "";
+                        educationfee.value = "";
+                        hostelfee.value = "";
+                        window.location.reload();
+                    } else {
+                        alert("Registration failed");
+                    }
+                })
+                .catch(() => {
+                    alert("Server error");
+                });
+        });
+
+        fetch("http://localhost:2000/fee_structure")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(e => {
+                    const tableRow = document.getElementById("tablerow");
+                    const formattedAmount = new Intl.NumberFormat('en-IN').format(parseInt(e.educationfee) + parseInt(e.hostelfee));
+                    let tr = document.createElement("tr");
+                    let tdId = document.createElement("td");
+                    let tdClass = document.createElement("td");
+                    let tdYear = document.createElement("td");
+                    let tdTotalFee = document.createElement("td");
+                    let tdStatus = document.createElement("td");
+
+                    tdId.textContent = e.id;
+                    tdClass.textContent = e.class1;
+                    tdYear.textContent = e.year;
+                    tdTotalFee.textContent = `₹ ${formattedAmount}`;
+                    tdStatus.textContent = e.status;
+                    tdStatus.className = e.status === "Active" ? "paid" : "inactive";
+                    tdStatus.style.cursor = "pointer";
+
+                    tdStatus.addEventListener("click", () => {
+                        toggleStatus(e.id, tdStatus);
+                    });
+
+                    tr.append(tdId, tdClass, tdYear, tdTotalFee, tdStatus);
+                    tableRow.appendChild(tr);
+                });
+            })
+            .catch(err => console.error(err));
+
+        function toggleStatus(id, td) {
+            let newStatus = td.textContent === "Active" ? "Inactive" : "Active";
+
+            fetch(`http://localhost:2000/fee_structure/status/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    td.textContent = newStatus;
+                    td.className = newStatus === "Active" ? "paid" : "inactive";
+                })
+                .catch(err => console.error(err));
+        }
+
+        function dashboard() {
+            window.location.replace("dashboard.html");
+        }
+        function students() {
+            window.location.replace("studentdashboard.html");
+        }
+        function payments() {
+            window.location.replace("payments.html");
+        }
+        function dues() {
+            window.location.replace("dues.html");
+        }
+        function receipts() {
+            window.location.replace("receipts.html");
+        }
+        function reports() {
+            window.location.replace("reports.html");
+        }
+        function logout() {
+            window.location.replace("index.html");
+        }
+    </script>
+
+</body>
+
+</html>

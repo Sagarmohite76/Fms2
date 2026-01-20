@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>View Receipt | FMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            padding: 30px;
+        }
+
+        .receipt-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .receipt-box {
+            background: white;
+            width: 700px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .receipt-header h1 {
+            color: #1f2933;
+        }
+
+        .receipt-header p {
+            color: #555;
+        }
+
+        .receipt-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .student-info {
+            margin: 15px 0;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .receipt-table th,
+        .receipt-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .receipt-table th {
+            background: #1f2933;
+            color: white;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        .receipt-footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .signature {
+            border-top: 1px solid #000;
+            padding-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .print {
+            background: #1976d2;
+            color: white;
+        }
+
+        .back {
+            background: #555;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .receipt-box {
+                width: 100%;
+            }
+
+            .receipt-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        .Qrcode {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 170px;
+            border: 1px dashed #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="receipt-container">
+        <div class="receipt-box">
+
+            <div class="receipt-header">
+                <h1>Fee Management System</h1>
+                <p>Official Payment Receipt</p>
+            </div>
+
+            <div class="receipt-info">
+                <div>
+                    <p><strong>Receipt No:</strong> <span id="receiptNo"></span></p>
+                    <p><strong>Date:</strong> <span id="date"></span></p>
+                </div>
+                <div>
+                    <p><strong>Payment Mode:</strong> <span id="payment"></span></p>
+                    <p><strong>Status:</strong> <span id="status"></span></p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="student-info">
+                <p><strong>Student Name:</strong> <span id="name"></span></p>
+                <p><strong>Class:</strong> <span id="class"></span></p>
+            </div>
+
+            <table class="receipt-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tuition Fee</td>
+                        <td>₹ <span id="amount"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total">
+                <p>Total Paid: <strong>₹ <span id="total"></span></strong></p>
+            </div>
+
+            <div class="receipt-footer">
+                <p>Thank you for your payment.</p>
+                <p class="signature">Authorized Signature</p>
+            </div>
+
+            <div class="actions">
+                <button class="print" onclick="window.print()">Print</button>
+                <button class="back" onclick="back()">Back</button>
+            </div>
+
+            <div id="qrcode" class="Qrcode">
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const formattedAmount = new Intl.NumberFormat('en-IN').format(params.get("amount"));
+        document.getElementById("receiptNo").textContent = params.get("receipt");
+        document.getElementById("date").textContent = params.get("date");
+        document.getElementById("payment").textContent = params.get("payment");
+        document.getElementById("status").textContent = params.get("status");
+        document.getElementById("name").textContent = params.get("name");
+        document.getElementById("class").textContent = params.get("class");
+        document.getElementById("amount").textContent = formattedAmount;
+        document.getElementById("total").textContent = formattedAmount;
+
+        function back() {
+            window.location.replace("receipts.html");
+        }
+
+
+        function generateQR() {
+
+            if (typeof QRCode === "undefined") {
+                alert("QR library not loaded. Check internet connection.");
+                return;
+            }
+
+            const qrDiv = document.getElementById("qrcode");
+            qrDiv.innerHTML = "";
+
+            const qrData =
+                "Receipt No: " + params.get("receipt") + "\r\n" +
+                "Name: " + params.get("name") + "\r\n" + 
+                "Class: " + params.get("class") + "\r\n" +
+                "Amount: " + formattedAmount  + "\r\n" + 
+                "Date: " + params.get("date");
+
+
+
+            new QRCode(qrDiv, {
+                text: qrData,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        window.onload = () => {
+            generateQR();
+        };
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payments | Fee Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f8;
+        }
+
+        #menu-toggle {
+            display: none;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #1f2933;
+            color: #ffffff;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .menu .active {
+            background: #374151;
+        }
+
+        .logout {
+            margin-top: 30px;
+            background: #b91c1c;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background: #991b1b;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .top-bar h1 {
+            color: #1f2933;
+        }
+
+        .form-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            color: #1f2933;
+        }
+
+        .payment-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1f2933;
+        }
+
+        button {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background: #1f2933;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #374151;
+        }
+
+        .table-section h2 {
+            margin-bottom: 15px;
+            color: #1f2933;
+        }
+
+        .table-wrapper {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #1f2933;
+            color: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f4f6f8;
+        }
+
+        .paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .pending {
+            color: #e65100;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            #menu-toggle:checked+.sidebar {
+                transform: translateX(0);
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <input type="checkbox" id="menu-toggle">
+
+        <aside class="sidebar">
+            <h2 class="logo">FMS</h2>
+            <ul class="menu">
+                <li onclick="dashboard()">Dashboard</li>
+                <li onclick="students()">Students</li>
+                <li onclick="feestructure()">Fee Structure</li>
+                <li class="active">Payments</li>
+                <li onclick="dues()">Dues</li>
+                <li onclick="receipts()">Receipts</li>
+                <li onclick="reports()">Reports</li>
+                <li class="logout" onclick="logout()">Logout</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <label for="menu-toggle" class="menu-btn">☰</label>
+                <h1>Fee Payments</h1>
+            </header>
+
+            <section class="form-section">
+                <h2>Make Payment</h2>
+
+                <form class="payment-form" id="form">
+                    <div class="form-group">
+                        <label>Student Name</label>
+                        <input type="text" required id="name" placeholder="Enter student name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Roll Number</label>
+                        <input type="text" disabled id="rollno" placeholder="Enter roll number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Class / Course</label>
+                        <input type="text" disabled id="course" placeholder="e.g. BCA, BSc">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Fee</label>
+                        <input type="number" disabled id="totalfee" placeholder="Total fee amount">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amount Paid</label>
+                        <input type="number" required id="amount" placeholder="Enter paid amount">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Mode</label>
+                        <select required id="mode">
+                            <option value="">Select mode</option>
+                            <option>Cash</option>
+                            <option>UPI</option>
+                            <option>Card</option>
+                            <option>Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Date</label>
+                        <input type="date" required id="date">
+                    </div>
+
+                    <button type="submit">Submit Payment</button>
+                </form>
+            </section>
+
+            <section class="table-section">
+                <h2>Payment History</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th>Amount Paid</th>
+                                <th>Mode</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablerow"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script>
+        const nameInput = document.getElementById("name");
+        const rollnoInput = document.getElementById("rollno");
+        const courseInput = document.getElementById("course");
+        const totalFeeInput = document.getElementById("totalfee");
+        const amount = document.getElementById("amount");
+        const paymentMode = document.getElementById("mode");
+        const date = document.getElementById("date")
+
+        let feestructureData = [];
+
+        fetch("http://localhost:2000/fee_structure")
+            .then(res => res.json())
+            .then(data => {
+                feestructureData = data;
+            });
+
+        let studentsData = [];
+
+        fetch("http://localhost:3000/details")
+            .then(res => res.json())
+            .then(data => {
+                studentsData = data;
+            });
+
+        nameInput.addEventListener("input", () => {
+            const enteredName = nameInput.value.toLowerCase();
+
+            const student = studentsData.find(s =>
+                s.name.toLowerCase().includes(enteredName)
+            );
+
+            if (!student) {
+                rollnoInput.value = "";
+                courseInput.value = "";
+                totalFeeInput.value = "";
+                return;
+            }
+
+            if (student.status.toLowerCase() !== "active") {
+                alert("This student is not active. Payment not allowed.");
+                rollnoInput.value = "";
+                courseInput.value = "";
+                totalFeeInput.value = "";
+                return;
+            }
+
+            rollnoInput.value = student.rollno;
+            courseInput.value = student.degree;
+
+            const fee = feestructureData.find(f =>
+                f.class1.toLowerCase() === student.degree.toLowerCase()
+            );
+
+            totalFeeInput.value =
+                Number(fee.educationfee) + Number(fee.hostelfee);
+        });
+
+        document.getElementById("form").addEventListener("submit", e => {
+            e.preventDefault();
+
+            fetch("http://localhost:3500/add-user4", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: nameInput.value,
+                    rollno: rollnoInput.value,
+                    class1: courseInput.value,
+                    totalfee: totalFeeInput.value,
+                    amount_paid: amount.value,
+                    mode: paymentMode.value,
+                    date: date.value
+                })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    alert("Payment Added Successfully");
+                    form.reset();
+                    window.location.reload();
+                })
+                .catch(() => alert("Server Error"));
+        });
+
+        const tablerow = document.getElementById("tablerow");
+        fetch("http://localhost:3500/payments")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(e => {
+                    const formattedAmount = new Intl.NumberFormat('en-IN').format(e.amount_paid);
+                    let tr = document.createElement("tr");
+                    let tdId = document.createElement("td");
+                    let tdName = document.createElement("td");
+                    let tdClass = document.createElement("td");
+                    let tdAmount = document.createElement("td");
+                    let tdMode = document.createElement("td");
+                    let tdDate = document.createElement("td");
+                    let tdStatus = document.createElement("td");
+
+                    tdId.textContent = e.id;
+                    tdName.textContent = e.name;
+                    tdClass.textContent = e.class1;
+                    tdAmount.textContent = `₹ ${formattedAmount}`;
+                    tdMode.textContent = e.mode;
+                    tdDate.textContent = formatDate(e.date);
+                    tdStatus.textContent = e.status;
+                    tdStatus.className = e.status === "Paid" ? "paid" : "pending";
+
+                    tr.append(tdId, tdName, tdClass, tdAmount, tdMode, tdDate, tdStatus);
+                    tablerow.appendChild(tr);
+                });
+            });
+
+        function formatDate(d) {
+            if (!d) return "";
+            const date = new Date(d);
+            const day = String(date.getUTCDate()).padStart(2, "0");
+            const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+            const year = date.getUTCFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
+        function dashboard() {
+            window.location.replace("dashboard.html");
+        }
+        function students() {
+            window.location.replace("studentdashboard.html");
+        }
+        function feestructure() {
+            window.location.replace("feestructure.html");
+        }
+        function dues() {
+            window.location.replace("dues.html");
+        }
+        function receipts() {
+            window.location.replace("receipts.html");
+        }
+        function reports() {
+            window.location.replace("reports.html");
+        }
+        function logout() {
+            window.location.replace("index.html");
+        }
+    </script>
+
+</body>
+
+</html>

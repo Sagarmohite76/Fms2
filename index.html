@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login | Fee Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        /* Background similar to dashboard */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1f2933, #283048);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Wrapper */
+        .login-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Card like dashboard widgets */
+        .login-card {
+            background: #ffffff;
+            width: 380px;
+            padding: 35px 32px;
+            border-radius: 14px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Heading */
+        .login-card h2 {
+            text-align: center;
+            color: #1f2933;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .system-name {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 28px;
+        }
+
+        /* Form fields */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 12px;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1f2933;
+            box-shadow: 0 0 0 2px rgba(31, 41, 51, 0.15);
+        }
+
+        /* Button same as dashboard dark buttons */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1f2933;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 12px;
+            font-weight: 500;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background: #111827;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Error (future use) */
+        .error-message {
+            margin-top: 14px;
+            font-size: 13px;
+            color: #dc2626;
+            text-align: center;
+            visibility: hidden;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .login-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <h2>Admin Login <span onclick="dot()">.</span></h2>
+            <p class="system-name">Fee Management System</p>
+
+            <form id="form">
+                <div class="form-group">
+                    <label>Username / Email</label>
+                    <input type="text" placeholder="Enter username or email" required id="username">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter password" required id="password">
+                </div>
+
+                <button type="submit" id="btn">Login</button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+
+        function dot() {
+            window.location.replace("adminregestration.html")
+        }
+
+        document.getElementById("form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const userName = document.getElementById("username");
+            const password = document.getElementById("password");
+            console.log(userName.value);
+
+            fetch("http://localhost:4000/admin")
+                .then(res => res.json())
+                .then(data => {
+                    let user = data.find(e => e.username == userName.value)
+                    // console.log(user);
+
+                    if (!user) {
+                        alert("Enter correct username");
+                        return;
+                    }
+
+                    if (user.password === password.value) {
+                        alert("Login successful");
+                        window.location.replace("dashboard.html");
+                    } else {
+                        alert("Enter correct password");
+                    }
+
+
+                })
+                .catch(err => console.error(err));
+        });
+    </script>
+
+</body>
+
+</html>

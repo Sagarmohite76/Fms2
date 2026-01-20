@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Students | Fee Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f8;
+        }
+
+        #menu-toggle {
+            display: none;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #1f2933;
+            color: #ffffff;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .menu .active {
+            background: #374151;
+        }
+
+        .logout {
+            margin-top: 30px;
+            background: #b91c1c;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background: #991b1b;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .top-bar h1 {
+            color: #1f2933;
+        }
+
+        .add-btn {
+            padding: 10px 16px;
+            background: #1f2933;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #374151;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .table-wrapper {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #1f2933;
+            color: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f4f6f8;
+        }
+
+        .paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactive {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            #menu-toggle:checked+.sidebar {
+                transform: translateX(0);
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            /* centers all text */
+        }
+
+        thead {
+            background: #1f2933;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 14px 10px;
+            font-size: 14px;
+            text-align: center;
+            /* ensure center alignment */
+            vertical-align: middle;
+            /* center vertically */
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #e5e7eb;
+        }
+
+        /* Status text */
+        .success {
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        /* Action buttons alignment */
+        td button {
+            margin: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <input type="checkbox" id="menu-toggle">
+
+        <aside class="sidebar">
+            <h2 class="logo">FMS</h2>
+            <ul class="menu">
+                <li onclick="dashboard()">Dashboard</li>
+                <li class="active">Students</li>
+                <li onclick="feestructure()">Fee Structure</li>
+                <li onclick="payments()">Payments</li>
+                <li onclick="dues()">Dues</li>
+                <li onclick="receipts()">Receipts</li>
+                <li onclick="reports()">Reports</li>
+                <li class="logout" onclick="logout()">Logout</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <label for="menu-toggle" class="menu-btn">☰</label>
+                <h1>Students</h1>
+                <button class="add-btn" onclick="addStudent()">+ Add Student</button>
+            </header>
+
+            <div class="search-box">
+                <input type="text" placeholder="Search by name, roll no, class..." id="search">
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Roll No</th>
+                            <th>Class</th>
+                            <th>Academic Year</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablerow"></tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+        const search = document.getElementById("search");
+        search.addEventListener("keyup", () => {
+            let value = search.value.toLowerCase();
+            let rows = document.querySelectorAll("tbody tr")
+            rows.forEach((row) => {
+                let id = row.cells[0].innerText;
+                let name = row.cells[1].innerText.toLowerCase();
+                let Class = row.cells[2].innerText;
+                if (id.includes(value) || name.includes(value) || Class.includes(value)) {
+                    row.style.display = ""
+                } else {
+                    row.style.display = "none"
+                }
+            })
+        })
+
+        fetch("http://localhost:3000/details")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(e => {
+                    const tableRow = document.getElementById("tablerow");
+                    let tr = document.createElement("tr");
+                    let tdId = document.createElement("td");
+                    let tdName = document.createElement("td");
+                    let tdrollNO = document.createElement("td");
+                    let tdClass = document.createElement("td");
+                    let tdYear = document.createElement("td");
+                    let tdPhone = document.createElement("td");
+                    let tdStatus = document.createElement("td");
+
+                    tdId.textContent = e.id;
+                    tdName.textContent = e.name;
+                    tdrollNO.textContent = e.rollno;
+                    tdClass.textContent = e.degree;
+                    tdYear.textContent = e.year;
+                    tdPhone.textContent = e.mobile;
+                    tdStatus.textContent = e.status;
+                    tdStatus.className = e.status === "Active" ? "paid" : "inactive";
+                    tdStatus.style.cursor = "pointer";
+
+                    tdStatus.addEventListener("click", () => {
+                        toggleStatus(e.id, tdStatus);
+                    });
+
+                    tr.append(tdId, tdName, tdrollNO, tdClass, tdYear, tdPhone, tdStatus);
+                    tableRow.appendChild(tr);
+                });
+            })
+            .catch(err => console.error(err));
+
+        function toggleStatus(id, td) {
+            let newStatus = td.textContent === "Active" ? "Inactive" : "Active";
+
+            fetch(`http://localhost:3000/details/status/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    td.textContent = newStatus;
+                    td.className = newStatus === "Active" ? "paid" : "inactive";
+                })
+                .catch(err => console.error(err));
+        }
+
+        function addStudent() {
+            window.location.replace("addstudent.html");
+        }
+        function dashboard() {
+            window.location.replace("dashboard.html");
+        }
+        function feestructure() {
+            window.location.replace("feestructure.html");
+        }
+        function payments() {
+            window.location.replace("payments.html");
+        }
+        function dues() {
+            window.location.replace("dues.html");
+        }
+        function receipts() {
+            window.location.replace("receipts.html");
+        }
+        function reports() {
+            window.location.replace("reports.html");
+        }
+        function logout() {
+            window.location.replace("index.html");
+        }
+    </script>
+
+</body>
+
+</html>

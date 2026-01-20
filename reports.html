@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reports | Fee Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f8;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #1f2933;
+            color: white;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .menu .active {
+            background: #374151;
+        }
+
+        .logout {
+            margin-top: 30px;
+            background: #b91c1c;
+            text-align: center;
+        }
+
+        /* Main */
+        .main-content {
+            flex: 1;
+            padding: 25px;
+        }
+
+        /* Header */
+        .top-bar h1 {
+            color: #1f2933;
+        }
+
+        .subtitle {
+            color: #555;
+        }
+
+        /* Filters */
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .filter-section input,
+        .filter-section select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            font-size: 15px;
+            color: #555;
+        }
+
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .success p {
+            color: green;
+        }
+
+        .warning p {
+            color: #e65100;
+        }
+
+        .info p {
+            color: #1976d2;
+        }
+
+        /* Tables */
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h2 {
+            margin-bottom: 15px;
+            color: #1f2933;
+        }
+
+        .table-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #1f2933;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f4f6f8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .filter-section {
+                flex-direction: column;
+            }
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        thead {
+            background: #1f2933;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 14px 10px;
+            font-size: 14px;
+            text-align: center;
+          
+            vertical-align: middle;
+     
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #e5e7eb;
+        }
+
+        .success {
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        td button {
+            margin: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="logo">FMS</h2>
+            <ul class="menu">
+                <li onclick="dashboard()">Dashboard</li>
+                <li onclick="students()">Students</li>
+                <li onclick="feestructure()">Fee Structure</li>
+                <li onclick="payments()">Payments</li>
+                <li onclick="dues()">Dues</li>
+                <li onclick="receipts()">Receipts</li>
+                <li class="active">Reports</li>
+                <li class="logout" onclick="logout()">Logout</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="top-bar">
+                <h1>Reports</h1>
+                <p class="subtitle">Fee collection and dues summary</p>
+            </header>
+
+            <!-- Filters -->
+            <section class="filter-section">
+                <input type="date">
+                <input type="date">
+                <select>
+                    <option>All Classes</option>
+                    <option>BCA</option>
+                    <option>BSc</option>
+                    <option>BCom</option>
+                </select>
+                <select>
+                    <option>All Reports</option>
+                    <option>Fee Collection</option>
+                    <option>Dues</option>
+                    <option>Student-wise</option>
+                </select>
+            </section>
+
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="card">
+                    <h3>Total Students</h3>
+                    <p>120</p>
+                </div>
+                <div class="card success">
+                    <h3>Total Collected</h3>
+                    <p>₹ 9,20,000</p>
+                </div>
+                <div class="card warning">
+                    <h3>Total Dues</h3>
+                    <p>₹ 3,50,000</p>
+                </div>
+                <div class="card info">
+                    <h3>Receipts Issued</h3>
+                    <p>240</p>
+                </div>
+            </section>
+
+            <!-- Fee Collection Report -->
+            <section class="table-section">
+                <h2>Fee Collection Report</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Class</th>
+                                <th>Students Paid</th>
+                                <th>Amount Collected</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>16-01-2026</td>
+                                <td>BCA</td>
+                                <td>25</td>
+                                <td>₹ 1,50,000</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>15-01-2026</td>
+                                <td>BSc</td>
+                                <td>20</td>
+                                <td>₹ 1,20,000</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>14-01-2026</td>
+                                <td>BCom</td>
+                                <td>18</td>
+                                <td>₹ 95,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Dues Report -->
+            <section class="table-section">
+                <h2>Dues Report</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Class</th>
+                                <th>Total Students</th>
+                                <th>Fully Paid</th>
+                                <th>Pending</th>
+                                <th>Overdue</th>
+                                <th>Total Due Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>BCA</td>
+                                <td>40</td>
+                                <td>22</td>
+                                <td>12</td>
+                                <td>6</td>
+                                <td>₹ 1,50,000</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>BSc</td>
+                                <td>35</td>
+                                <td>25</td>
+                                <td>7</td>
+                                <td>3</td>
+                                <td>₹ 1,10,000</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>BCom</td>
+                                <td>45</td>
+                                <td>31</td>
+                                <td>10</td>
+                                <td>4</td>
+                                <td>₹ 90,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+    <script>
+        function dashboard() {
+            window.location.replace("dashboard.html");
+        }
+        function students() {
+            window.location.replace("studentdashboard.html");
+        }
+        function feestructure() {
+            window.location.replace("feestructure.html");
+        }
+        function payments() {
+            window.location.replace("payments.html");
+        }
+        function dues() {
+            window.location.replace("dues.html");
+        }
+        function receipts() {
+            window.location.replace("receipts.html");
+        }
+
+        function logout() {
+            window.location.replace("index.html");
+        }
+    </script>
+</body>
+
+</html>
